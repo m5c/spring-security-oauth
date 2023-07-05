@@ -1,87 +1,106 @@
-## Spring Security OAuth
+# Spring Security OAuth
 
-I've just announced a new course, dedicated on exploring the new OAuth2 stack in Spring Security 5 - Learn Spring Security OAuth: 
-http://bit.ly/github-lsso
+A minimal sample setup that actually [adheres to the protocol](https://datatracker.ietf.org/doc/html/rfc6749).
 
-</br></br></br>
+## About
 
+This is a fork of [Baeldungs official Spring-Security template](https://github.com/Baeldung/spring-security-oauth/tree/master/oauth-authorization-server), reduced to the "oauth-authorization-server" project.  
+For the full instructions, see: [Baeldung.com](https://www.baeldung.com/spring-security-oauth-auth-server)
 
+### The OAuth2 Protocol 
 
-## Build the Project
+The OAuth2 protocol is an industrial standard to allow access of REST resources through a third
+party service, on behalf of their owner. The purpose is to strip the need for credential sharing, by
+means of impersonation via cryptographic tokens.
+The key entities in any OAuth2 interplay are three RESTful services:
+
+* A **Resource Server**: It offers a resource, belonging to a *Resource Owner*. The latter is
+  usually a biological or legal person, not an actually service.
+* A **Client**: It needs to access a protected resource of the *Resource Server*, on behalf of the
+  *Resource Owner*.
+* An **Authorization Server**: It is the center part of the OAuth2 protocol and provides secure
+  tokens that allow impersonation of the *Resource Owner* by the *Proxy Service*, without credential
+  sharing.
+
+> Note that depending on the protocol variant, the **Authorization Server** may be replaced by an
+> existing entitiy e.g. an Authorization server provider by Google, Spotify, etc...*
+
+This repository hosts sample implementations of the three services, that allow a play-though of the
+protocol. There is no implementation of the **Rersource Owner**, which is the human player in the
+OAuth2 dance.
+
+### Services
+
+This repository reflects the [standard protocol entities](#about) as follows:
+
+* A [simple **Resource Server**](resource-server): Sample users (
+  resource owners) can access this protected service to retrieve a list of articles.
+* A newly coded [Time Proxy Service](Client) as OAuth2 **Client**, which attempts to access the
+  ResourceServer on behalf of the user and therefore needs to be granted access. Permission to access the protected time resource is obtained, using the OAuth2
+  Protocol. This component likewise contains a minimal Web Frontent, to allow for interaction with
+  the **Resource Owner** by means of a interpreting user-agent.
+* An (almost) off-the-shelf [Authorization Service](AuthorizationServer) which keeps track of users,
+  services, granted access and tokens, to allow for a secured resource access following the OAuth2
+  dance.
+
+### Communication Layout
+
+The effective OAuth2 communication layout varries, depending on how roles are sperated or fused:
+
+* In essence, these variants differ in *how the granted authorization* is transferred back from
+  **Authorization Server** to **Client**.
+* The above process of transferring the authorization is called [**Authorization Grant**](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3) in protocol jargon.
+* There are different **Authorization Grant** types, but here we only deal with the standard case:
+    * Parties place minimal trust in one another.
+    * Parties are fully separated executables (services).
+* This standard type is called [**Authorization Code Grant**](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), in protocol jargon.
+
+Below schema illustrates the communication flow for the standard **Authorization Code** type:
+
 ```
-mvn clean install
+     +--------+                               +---------------+
+     |        |--(A)- Authorization Request ->|   Resource    |
+     |        |     (is a redirect to AS)     |     Owner     |
+     |        |<------------------------------|               |
+     |        | (B.3) RO forwards Auth. Code) +---------------+
+     |        |                                  ^   ^
+     |        |            (B.1) Page Forward    |   |  (B.2) RO grants auth.
+     |        |             & grant form reply   v   v   & AS returns Auth. Code
+     |        |                               +---------------+
+     |        |--(C)-- Authorization Grant -->| Authorization |
+     | Client |                               |     Server    |
+     |        |<-(D)----- Access Token -------|               |
+     |        |                               +---------------+
+     |        |
+     |        |                               +---------------+
+     |        |--(E)----- Access Token ------>|    Resource   |
+     |        |                               |     Server    |
+     |        |<-(F)--- Protected Resource ---|               |
+     +--------+                               +---------------+
 ```
 
+> Note: The above layout is based on the official protocol specifiation. Additional arrows were
+> added to better illustrate the *Request Reply* nature of the underlying HTTP protocol.
+> Steps ```B.1-B.3``` reflect the **Authorization Code** communication layout.
+> Some documentation also create an artificial separation between **Resource Owner** and **User Agent**. It is a contrived splitup, because the latter then represents the browser sided JavaScript executions, interacted with by the **Resource Owner**. The interaction between **Resource Owner** and **User Agent** is then trivial, which is why it was excluded from above figure.
 
 
-## Projects/Modules
-This project contains a number of modules, here is a quick description of what each module contains: 
-- `oauth-rest` - Authorization Server (Keycloak), Resource Server and Angular App based on the new Spring Security 5 stack
-- `oauth-jwt` - Authorization Server (Keycloak), Resource Server and Angular App based on the new Spring Security 5 stack, focused on JWT support
-- `oauth-jws-jwk-legacy` - Authorization Server and Resource Server for JWS + JWK in a Spring Security OAuth2 Application
-- `oauth-legacy` - Authorization Server, Resource Server, Angular and AngularJS Apps for legacy Spring Security OAuth2
+## Interest
 
+We use this reduced repo as sample project to illustrate the code changes introduced to secure a standard spring boot REST service.
+Long term goal is to replace the sample resource server by a modified, secured version of [the BookStore](https://github.com/m5c/BookStoreInternals).
 
+## Usage
 
-## Run the Modules
-You can run any sub-module using command line: 
-```
-mvn spring-boot:run
-```
+Here is how to start up the service interplay and test secured resource access:
 
-If you're using Spring STS, you can also import them and run them directly, via the Boot Dashboard 
-
-You can then access the UI application - for example the module using the Password Grant - like this: 
-`http://localhost:8084/`
-
-You can login using these credentials, username:john and password:123 
-
-## Run the Angular 7 Modules
-
-- To run any of Angular7 front-end modules (_spring-security-oauth-ui-implicit-angular_ , _spring-security-oauth-ui-password-angular_ and _oauth-ui-authorization-code-angular_) , we need to build the app first:
-```
-mvn clean install
-```
-
-- Then we need to navigate to our Angular app directory:
-```
-cd src/main/resources
-```
-
-And run the command to download the dependencies:
-```
-npm install
-```
-
-- Finally, we will start our app:
-```
-npm start
-```
-- Note: Angular7 modules are commented out because these don't build on Jenkins as they need npm installed, but they build properly locally
-- Note for Angular version < 4.3.0: You should comment out the HttpClient and HttpClientModule import in app.module and app.service.ts. These version rely on the HttpModule.
-
-## Using the JS-only SPA OAuth Client
-The main purpose of these projects are to analyze how OAuth should be carried out on Javascript-only Single-Page-Applications, using the authorization_code flow with PKCE.
-
-The *clients-SPA-legacy/clients-js-only-react-legacy* project includes a very simple Spring Boot Application serving a couple of separate Single-Page-Applications developed in React.
-
-It includes two pages:
-  * a 'Step-By-Step' guide, where we analyze explicitly each step that we need to carry out to obtain an access token and request a secured resource
-  * a 'Real Case' scenario, where we can log in, and obtain or use secured endpoints (provided by the Auth server and by a Custom server we set up)
-  * the Article's Example Page, with the exact same code that is shown in the related article
-
-The Step-By-Step guide supports using different providers (Authorization Servers) by just adding (or uncommenting) the corresponding entries in the static/*spa*/js/configs.js.
-
-### The 'Step-by-Step' OAuth Client with PKCE page
-After running the Spring Boot Application (a simple *mvn spring-boot:run* command will be enough), we can browse to *http://localhost:8080/pkce-stepbystep/index.html* and follow the steps to find out what it takes to obtain an access token using the Authorization Code with PKCE Flow.
-
-When prompted the login form, we might need to create a user for our Application first.
-
-### The 'Real-Case' OAuth Client with PKCE page
-To use all the features contained in the *http://localhost:8080/pkce-realcase/index.html* page, we'll need to first start the resource server (clients-SPA-legacy/oauth-resource-server-auth0-legacy).
-
-In this page, we can:
-  * List the resources in our resource server (public, no permissions needed)
-  * Add resources (we're requested the permissions to do that when logging in. For simplicity sake, we just request the existing 'profile' scope)
-  * Remove resources (we actually can't accomplish this task, because the resource server requires the application to have permissions that were not included in the existing scopes)
-
+ 0) Add this entry to your `etc/hosts` file: `127.0.0.1 auth-server`
+ 1) Start the Authorization Server:  
+`cd spring-authorization-server; mvn clean package spring-boot:run`
+ 2) Start the Resource Server:  
+`cd resource-server; mvn clean package spring-boot:run`
+ 3) Start the Client:  
+`cd client-server; mvn clean package spring-boot:run`
+ 4) Access the client:  
+Open [http://127.0.0.1:8080/articles](http://127.0.0.1:8080/articles)  
+Use the credentials "admin", "password"
