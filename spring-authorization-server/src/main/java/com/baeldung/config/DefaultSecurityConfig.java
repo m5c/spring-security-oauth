@@ -35,11 +35,29 @@ public class DefaultSecurityConfig {
         .build();
 
     UserDetails montrealStoreManager = User.withDefaultPasswordEncoder()
-        .username("montreal")
+        .username("montréal")
         .password("password")
         .roles("USER")
         .build();
-    return new InMemoryUserDetailsManager(commentReveiwer, montrealStoreManager);
+
+    UserDetails munchenStoreManager = User.withDefaultPasswordEncoder()
+        .username("münchen")
+        .password("password")
+        .roles("USER")
+        .build();
+
+    UserDetails osterhofenStoreManager = User.withDefaultPasswordEncoder()
+        .username("osterhofen")
+        .password("password")
+        .roles("USER")
+        .build();
+
+    UserDetails lyonStoreManager = User.withDefaultPasswordEncoder()
+        .username("lyon")
+        .password("password")
+        .roles("USER")
+        .build();
+    return new InMemoryUserDetailsManager(commentReveiwer, montrealStoreManager, munchenStoreManager, osterhofenStoreManager, lyonStoreManager);
   }
 
 }
