@@ -17,13 +17,13 @@ public class ArticlesController {
     @Autowired
     private WebClient webClient;
 
-    @GetMapping(value = "/articles")
+    @GetMapping(value = "/bookstore/isbns")
     public String[] getArticles(
       @RegisteredOAuth2AuthorizedClient("articles-client-authorization-code") OAuth2AuthorizedClient authorizedClient
     ) {
         return this.webClient
           .get()
-          .uri("http://127.0.0.1:8090/articles")
+          .uri("http://127.0.0.1:8090/bookstore/isbns")
           .attributes(oauth2AuthorizedClient(authorizedClient))
           .retrieve()
           .bodyToMono(String[].class)

@@ -14,23 +14,32 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class DefaultSecurityConfig {
 
-    @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests(authorizeRequests ->
-          authorizeRequests.anyRequest().authenticated()
+  @Bean
+  SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.authorizeRequests(authorizeRequests ->
+            authorizeRequests.anyRequest().authenticated()
         )
-          .formLogin(withDefaults());
-        return http.build();
-    }
+        .formLogin(withDefaults());
+    return http.build();
+  }
 
-    @Bean
-    UserDetailsService users() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-          .username("admin")
-          .password("password")
-          .roles("USER")
-          .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+  @Bean
+  UserDetailsService users() {
+
+    // The database knows several users: 2 generic users for comments and catalogue,
+    // several for the individual stock locactions
+    UserDetails commentReveiwer = User.withDefaultPasswordEncoder()
+        .username("commentreviewer")
+        .password("password")
+        .roles("USER")
+        .build();
+
+    UserDetails montrealStoreManager = User.withDefaultPasswordEncoder()
+        .username("montreal")
+        .password("password")
+        .roles("USER")
+        .build();
+    return new InMemoryUserDetailsManager(commentReveiwer, montrealStoreManager);
+  }
 
 }
