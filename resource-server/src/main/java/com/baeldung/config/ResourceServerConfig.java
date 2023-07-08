@@ -11,10 +11,10 @@ public class ResourceServerConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Note: mvcMatcher is like an antmatcher, but also triggers for any file extensions to the resource.
-        http.mvcMatcher("/articles/**")
+        http.mvcMatcher("/bookstore/**")
           .authorizeRequests()
-          .mvcMatchers("/articles/**")  // TODO: figure out difference between matcher and matchers.
-          .access("hasAuthority('SCOPE_articles.read')")
+          .mvcMatchers("/bookstore/**")
+          .access("hasAuthority('SCOPE_assortment.read')")
           .and()
           .oauth2ResourceServer()
           .jwt();
