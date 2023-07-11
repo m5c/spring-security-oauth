@@ -23,11 +23,13 @@ public class ResourceServerConfig {
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     // Note: mvcMatcher is the more extensive version of an antmatcher. The difference is that an mvcMatcher also triggers the sercurity chain rule all resource file extensions.
     // First mandate that the inbound request carries a token (without yet specifying details)
+
+    // This first httpSecurity configuration mandates an assortment.write scoped token is provided for adding new books to the assortment.
     http.mvcMatcher("/bookstore/isbns/{isbn}").authorizeRequests().
         // ...then refine the previous mvcMatcher...
             mvcMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
         // ...and only allow accesss if the token is associated to the assortment.read scope...
-        .access("hasAuthority('SCOPE_assortment.read')")
+        .access("hasAuthority('SCOPE_assortment.write')")
         // finally configure to obtain the scope information used abote to be extracted from the jwt issued but the OAuth2 authorization server.
         .and().oauth2ResourceServer().jwt();
     return http.build();

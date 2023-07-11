@@ -55,7 +55,7 @@ public class AuthorizationServerConfig {
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
             .redirectUri("http://127.0.0.1:8080/login/oauth2/code/articles-client-oidc")
             .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
-            .scope("assortment.read").build();
+            .scope("assortment.write").build();
 
     // TODO: register a second client with scope that allows manipulation of regional bookstore stock data.
 
