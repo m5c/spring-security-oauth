@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.baeldung</groupId>
-    <artifactId>client-server</artifactId>
+    <artifactId>assortment-client-server</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -28,6 +28,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
+
+        <!-- WebFlux provides the webclient which allows easy calls to REST apis. -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
@@ -37,6 +39,16 @@
             <groupId>io.projectreactor.netty</groupId>
             <artifactId>reactor-netty</artifactId>
             <version>${reactor-netty.version}</version>
+        </dependency>
+
+        <!-- Added new dependency to bookstore internals, so we have convenient access to transfer object (individual book object structure)
+        To install the bookstore-internals library, see:
+        https://github.com/m5c/BookStoreInternals
+        -->
+        <dependency>
+            <groupId>eu.kartoffelquadrat</groupId>
+            <artifactId>bookstoreinternals</artifactId>
+            <version>1.5</version>
         </dependency>
     </dependencies>
 

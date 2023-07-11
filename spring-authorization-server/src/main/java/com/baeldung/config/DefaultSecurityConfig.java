@@ -26,8 +26,15 @@ public class DefaultSecurityConfig {
   @Bean
   UserDetailsService users() {
 
+    // TODO: add user for assortment (write) access.
     // The database knows several users: 2 generic users for comments and catalogue,
     // several for the individual stock locactions
+    UserDetails assortmentExtender = User.withDefaultPasswordEncoder()
+        .username("assortmentextender")
+        .password("password")
+        .roles("USER") // TODO: figure out what role is appropriate
+        .build();
+
     UserDetails commentReveiwer = User.withDefaultPasswordEncoder()
         .username("commentreviewer")
         .password("password")
@@ -57,7 +64,7 @@ public class DefaultSecurityConfig {
         .password("password")
         .roles("USER")
         .build();
-    return new InMemoryUserDetailsManager(commentReveiwer, montrealStoreManager, munchenStoreManager, osterhofenStoreManager, lyonStoreManager);
+    return new InMemoryUserDetailsManager(assortmentExtender, commentReveiwer, montrealStoreManager, munchenStoreManager, osterhofenStoreManager, lyonStoreManager);
   }
 
 }

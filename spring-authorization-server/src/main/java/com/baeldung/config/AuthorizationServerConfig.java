@@ -29,63 +29,68 @@ import java.util.UUID;
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        return http.formLogin(Customizer.withDefaults()).build();
-    }
+  @Bean
+  @Order(Ordered.HIGHEST_PRECEDENCE)
+  public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
+    OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+    return http.formLogin(Customizer.withDefaults()).build();
+  }
 
-    @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-          .clientId("articles-client")
-          .clientSecret("{noop}secret")
-          .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-          .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-          .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-          .redirectUri("http://127.0.0.1:8080/login/oauth2/code/articles-client-oidc")
-          .redirectUri("http://127.0.0.1:8080/authorized")
-          .scope(OidcScopes.OPENID)
-          .scope("assortment.read")
-          .build();
+  /**
+   * This configuration bean associates the (proxy) clients that access resources on behalf of
+   * resource owners. Technically the list should be extensible at runtime, as the interest of
+   * OAuth2 is to add new clients to a microserve, which are not known at deployment time. However,
+   * since the interest of this sample project is secruing the resource server API, hard coded
+   * registration of proxy clients is acceptable.
+   *
+   * @return repository configuration listing the associated (proxy) client services.
+   */
+  @Bean
+  public RegisteredClientRepository registeredClientRepository() {
+    RegisteredClient assortmentClient =
+        RegisteredClient.withId(UUID.randomUUID().toString()).clientId("articles-client")
+            .clientSecret("{noop}secret")
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/articles-client-oidc")
+            .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
+            .scope("assortment.read").build();
 
-        return new InMemoryRegisteredClientRepository(registeredClient);
-    }
+    // TODO: register a second client with scope that allows manipulation of regional bookstore stock data.
 
-    @Bean
-    public JWKSource<SecurityContext> jwkSource() {
-        RSAKey rsaKey = generateRsa();
-        JWKSet jwkSet = new JWKSet(rsaKey);
-        return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
-    }
+    return new InMemoryRegisteredClientRepository(assortmentClient);
+  }
 
-    private static RSAKey generateRsa() {
-        KeyPair keyPair = generateRsaKey();
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        return new RSAKey.Builder(publicKey)
-          .privateKey(privateKey)
-          .keyID(UUID.randomUUID().toString())
-          .build();
-    }
+  @Bean
+  public JWKSource<SecurityContext> jwkSource() {
+    RSAKey rsaKey = generateRsa();
+    JWKSet jwkSet = new JWKSet(rsaKey);
+    return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+  }
 
-    private static KeyPair generateRsaKey() {
-        KeyPair keyPair;
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(2048);
-            keyPair = keyPairGenerator.generateKeyPair();
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
-        }
-        return keyPair;
-    }
+  private static RSAKey generateRsa() {
+    KeyPair keyPair = generateRsaKey();
+    RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+    RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+    return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString())
+        .build();
+  }
 
-    @Bean
-    public ProviderSettings providerSettings() {
-        return ProviderSettings.builder()
-          .issuer("http://auth-server:9000")
-          .build();
+  private static KeyPair generateRsaKey() {
+    KeyPair keyPair;
+    try {
+      KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+      keyPairGenerator.initialize(2048);
+      keyPair = keyPairGenerator.generateKeyPair();
+    } catch (Exception ex) {
+      throw new IllegalStateException(ex);
     }
+    return keyPair;
+  }
+
+  @Bean
+  public ProviderSettings providerSettings() {
+    return ProviderSettings.builder().issuer("http://auth-server:9000").build();
+  }
 }
