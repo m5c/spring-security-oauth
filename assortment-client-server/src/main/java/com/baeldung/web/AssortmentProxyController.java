@@ -46,7 +46,7 @@ public class AssortmentProxyController {
 
     // 2) A get (same as before), to get new list of books (unsecured)
     return this.webClient.get().uri("http://127.0.0.1:8090/bookstore/isbns/")
-        .attributes(oauth2AuthorizedClient(authorizedClient)) // TODO: remove security mandate and defuse endpoint!
+//        .attributes(oauth2AuthorizedClient(authorizedClient)) // TODO: remove security mandate and defuse endpoint!
         .retrieve()
         .bodyToMono(String[].class).block();
   }

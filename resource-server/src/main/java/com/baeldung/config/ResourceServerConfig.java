@@ -1,6 +1,7 @@
 package com.baeldung.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,9 +23,9 @@ public class ResourceServerConfig {
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     // Note: mvcMatcher is the more extensive version of an antmatcher. The difference is that an mvcMatcher also triggers the sercurity chain rule all resource file extensions.
     // First mandate that the inbound request carries a token (without yet specifying details)
-    http.mvcMatcher("/bookstore/isbns/**").authorizeRequests().
+    http.mvcMatcher("/bookstore/isbns/{isbn}").authorizeRequests().
         // ...then refine the previous mvcMatcher...
-            mvcMatchers("/bookstore/isbns/**")
+            mvcMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
         // ...and only allow accesss if the token is associated to the assortment.read scope...
         .access("hasAuthority('SCOPE_assortment.read')")
         // finally configure to obtain the scope information used abote to be extracted from the jwt issued but the OAuth2 authorization server.
