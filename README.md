@@ -102,5 +102,7 @@ Here is how to start up the service interplay and test secured resource access:
  3) Start the Client:  
 `cd client-server; mvn clean package spring-boot:run`
  4) Access the client:  
-Open [http://127.0.0.1:8080/articles](http://127.0.0.1:8080/articles)  
-Use the credentials "admin", "password"
+Open [http://127.0.0.1:8080/articles](http://127.0.0.1:8080/assortmentextensions)  
+Use the credentials "assortmentextender", "password"
+ 5) Verify a new book is in the catalogue, and can be publicly accessed:  
+`curl -X GET http://127.0.0.1:8090/bookstore/isbns/3518368540`

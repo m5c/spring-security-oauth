@@ -57,9 +57,21 @@ public class AuthorizationServerConfig {
             .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
             .scope("assortment.write").build();
 
-    // TODO: register a second client with scope that allows manipulation of regional bookstore stock data.
+    // TODO figure out why client ID is not unique...
+    // Here we added a second (proxy Oauth2) client, that has the priviledge to change
+    // local store stocks
+    RegisteredClient stockClient =
+        RegisteredClient.withId(UUID.randomUUID().toString()).clientId("stock-client")
+            .clientSecret("{nooop}secret") // Unsure what this is, but it has to be unique...
+            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/stock-client-oidc")
+            .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
+            .scope("stock.write").build();
 
-    return new InMemoryRegisteredClientRepository(assortmentClient);
+    return new InMemoryRegisteredClientRepository(assortmentClient, stockClient);
+//    return new InMemoryRegisteredClientRepository(assortmentClient);
   }
 
   @Bean

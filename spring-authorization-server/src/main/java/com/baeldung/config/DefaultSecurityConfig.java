@@ -35,12 +35,6 @@ public class DefaultSecurityConfig {
         .roles("USER") // TODO: figure out what role is appropriate
         .build();
 
-    UserDetails commentReveiwer = User.withDefaultPasswordEncoder()
-        .username("commentreviewer")
-        .password("password")
-        .roles("USER")
-        .build();
-
     UserDetails montrealStoreManager = User.withDefaultPasswordEncoder()
         .username("montréal")
         .password("password")
@@ -64,7 +58,7 @@ public class DefaultSecurityConfig {
         .password("password")
         .roles("USER")
         .build();
-    return new InMemoryUserDetailsManager(assortmentExtender, commentReveiwer, montrealStoreManager, munchenStoreManager, osterhofenStoreManager, lyonStoreManager);
+    return new InMemoryUserDetailsManager(assortmentExtender, montrealStoreManager, munchenStoreManager, osterhofenStoreManager, lyonStoreManager);
   }
 
 }
