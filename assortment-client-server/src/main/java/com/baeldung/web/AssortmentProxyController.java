@@ -29,11 +29,10 @@ public class AssortmentProxyController {
    */
   @GetMapping(value = "/assortmentextension")
   public String[] getArticles(
-      @RegisteredOAuth2AuthorizedClient("articles-client-authorization-code")
+      @RegisteredOAuth2AuthorizedClient("assortment-client-authorization-code")
       OAuth2AuthorizedClient authorizedClient) {
 
-    // TODO: Create list of sample books to add to assortment
-    long isbn1 = 3518368540l;
+    // Here we create a new book object to add to the collection.
     BookDetailsImpl book = new BookDetailsImpl(3518368540l, "Homo Faber", "Max Frisch", 1610,
         "Max Frisch's 1957 novel \"Homo faber\" describes people in the technological age who believe they can organize life according to the laws of logic and science. According to Frisch, modern man lives past himself and surrenders to the feasibility euphoria of technology.");
 
@@ -46,7 +45,6 @@ public class AssortmentProxyController {
 
     // 2) A get (same as before), to get new list of books (unsecured)
     return this.webClient.get().uri("http://127.0.0.1:8090/bookstore/isbns/")
-//        .attributes(oauth2AuthorizedClient(authorizedClient)) // TODO: remove security mandate and defuse endpoint!
         .retrieve()
         .bodyToMono(String[].class).block();
   }

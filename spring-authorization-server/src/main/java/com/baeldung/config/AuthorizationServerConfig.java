@@ -48,12 +48,12 @@ public class AuthorizationServerConfig {
   @Bean
   public RegisteredClientRepository registeredClientRepository() {
     RegisteredClient assortmentClient =
-        RegisteredClient.withId(UUID.randomUUID().toString()).clientId("articles-client")
+        RegisteredClient.withId(UUID.randomUUID().toString()).clientId("assortment-client")
             .clientSecret("{noop}secret")
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/articles-client-oidc")
+            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/assortment-client-oidc")
             .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
             .scope("assortment.write").build();
 
