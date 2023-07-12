@@ -24,12 +24,15 @@ public class ResourceServerConfig {
     // Note: mvcMatcher is the more extensive version of an antmatcher. The difference is that an mvcMatcher also triggers the sercurity chain rule all resource file extensions.
     // First mandate that the inbound request carries a token (without yet specifying details)
 
+    // TODO: Refine filter chain as described on SO:
+    // https://stackoverflow.com/a/76638755/13805480
+
     // TODO: figure out why this security rule does not check the SCOPE.
     // TODO: I can access this with a different scope and it not clear why...
     // This first httpSecurity configuration mandates an assortment.write scoped token is provided for adding new books to the assortment.
-    http.mvcMatcher("/bookstore/isbns/{isbn}").authorizeRequests().
+    http.mvcMatcher("/bookstore/isbns/{isbn}").authorizeRequests()
         // ...then refine the previous mvcMatcher...
-            mvcMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
+        .mvcMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
         // ...and only allow accesss if the token is associated to the assortment.read scope...
         .access("hasAuthority('SCOPE_assortment.write')")
         // finally configure to obtain the scope information used abote to be extracted from the jwt issued but the OAuth2 authorization server.
