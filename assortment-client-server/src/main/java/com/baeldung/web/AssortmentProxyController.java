@@ -8,10 +8,12 @@ import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2Aut
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
 @RestController
-public class AssortmentProxyController {t
+public class AssortmentProxyController {
+
 
   @Autowired
   private WebClient webClient;
@@ -39,13 +41,12 @@ public class AssortmentProxyController {t
     // 1) A put to add the new book(s) (secured)
     this.webClient.put().uri("http://127.0.0.1:8090/bookstore/isbns/" + book.getIsbn())
         .contentType(MediaType.APPLICATION_JSON).bodyValue(book)
-        .attributes(oauth2AuthorizedClient(authorizedClient))
-        .retrieve().bodyToMono(Void.class) // Note: there seems to be no way to stripe the bodyToMono statement, even if there is no return body for this "put" endpoint.
+        .attributes(oauth2AuthorizedClient(authorizedClient)).retrieve().bodyToMono(
+            Void.class) // Note: there seems to be no way to stripe the bodyToMono statement, even if there is no return body for this "put" endpoint.
         .block();
 
     // 2) A get (same as before), to get new list of books (unsecured)
-    return this.webClient.get().uri("http://127.0.0.1:8090/bookstore/isbns/")
-        .retrieve()
+    return this.webClient.get().uri("http://127.0.0.1:8090/bookstore/isbns/").retrieve()
         .bodyToMono(String[].class).block();
   }
 }

@@ -1,6 +1,7 @@
 package com.github.m5c.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import static org.springframework.util.StringUtils.capitalize;
+
 
 import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
@@ -34,7 +37,7 @@ public class StockProxyController {
                               @PathVariable("storelocation") String storeLocation) {
 
     // Internally cities (for URLs) follow upper case syntax. Capitalizing to avoid that issue.
-    storeLocation = storeLocation.toUpperCase();
+    storeLocation = capitalize(storeLocation);
 
     // Hard coded details of harry potter book:
     long harryPotterIsbn = 9780739360385l;
@@ -47,8 +50,9 @@ public class StockProxyController {
         this.webClient.get().uri(localStockResource).retrieve().bodyToMono(Integer.class).block();
 
     // 2) Add another 100 copies to that location, and update remote resource
-    this.webClient.put().uri(localStockResource)
-        .bodyValue(copiesInStock + 100) // add 100 copies to stock
+    this.webClient.post().uri(localStockResource)
+        // TODO, ensure correct body encoding type is used here.
+        .contentType(MediaType.APPLICATION_JSON).bodyValue(copiesInStock + 100)
         // Note: The "bodyToMono" seems inevitable, even if there is no return payload.
         .attributes(oauth2AuthorizedClient(authorizedClient)).retrieve().bodyToMono(Void.class)
         .block();
