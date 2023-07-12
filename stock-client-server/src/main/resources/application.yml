@@ -8,6 +8,8 @@ logging:
     org.springframework.security: INFO
     org.springframework.security.oauth2: INFO
 
+# Client prefix has been changed to "stock" in this configuration file.
+# Also references to own service port have been updated to "8081", compared to the other client.
 spring:
   security:
     oauth2:
@@ -16,17 +18,17 @@ spring:
           stock-client-oidc:
             provider: spring
             client-id: stock-client
-            client-secret: secret
+            client-secret: secret2
             authorization-grant-type: authorization_code
-            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://127.0.0.1:8081/login/oauth2/code/{registrationId}"
             scope: openid
             client-name: stock-client-oidc
           stock-client-authorization-code:
             provider: spring
             client-id: stock-client
-            client-secret: secret
+            client-secret: secret2 #Note: This must match the suffix in the AS-Config file
             authorization-grant-type: authorization_code
-            redirect-uri: "http://127.0.0.1:8080/authorized"
+            redirect-uri: "http://127.0.0.1:8081/authorized"
             scope: stock.write
             client-name: stock-client-authorization-code
         provider:

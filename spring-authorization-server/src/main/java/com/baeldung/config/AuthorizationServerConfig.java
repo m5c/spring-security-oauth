@@ -49,6 +49,8 @@ public class AuthorizationServerConfig {
   public RegisteredClientRepository registeredClientRepository() {
     RegisteredClient assortmentClient =
         RegisteredClient.withId(UUID.randomUUID().toString()).clientId("assortment-client")
+            // "{noop}" is a prefix keyword to delegate to inmemory authentication. See: https://stackoverflow.com/a/47976759/13805480
+            // the suffix "secret" must match in the client's application.yml file.
             .clientSecret("{noop}secret")
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
@@ -57,21 +59,22 @@ public class AuthorizationServerConfig {
             .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
             .scope("assortment.write").build();
 
-    // TODO figure out why client ID is not unique...
     // Here we added a second (proxy Oauth2) client, that has the priviledge to change
     // local store stocks
+    // Also a change compared to the previous client is the updated port number -> "8081"
     RegisteredClient stockClient =
         RegisteredClient.withId(UUID.randomUUID().toString()).clientId("stock-client")
-            .clientSecret("{nooop}secret") // Unsure what this is, but it has to be unique...
+            // "{noop}" is a prefix keyword to delegate to inmemory authentication. See: https://stackoverflow.com/a/47976759/13805480
+            // the suffix "secret2" must match in the client's application.yml file.
+            .clientSecret("{noop}secret2")
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/stock-client-oidc")
-            .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
+            .redirectUri("http://127.0.0.1:8081/login/oauth2/code/stock-client-oidc")
+            .redirectUri("http://127.0.0.1:8081/authorized").scope(OidcScopes.OPENID)
             .scope("stock.write").build();
 
     return new InMemoryRegisteredClientRepository(assortmentClient, stockClient);
-//    return new InMemoryRegisteredClientRepository(assortmentClient);
   }
 
   @Bean
