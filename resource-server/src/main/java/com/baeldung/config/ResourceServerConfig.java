@@ -20,43 +20,38 @@ public class ResourceServerConfig {
    * matching is not suffucuent (this is e.g. the case when part of the URL must be matched against
    * the token resource owner).
    *
-   * @param http
-   * @return
+   * @param http configuration on which we can define pattern matcher and filter rules.
+   * @return SecurityFilterChain to apply for all inbound requests to Resource server.
    * @throws Exception
    */
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    // Note: mvcMatcher is the more extensive version of an antmatcher. The difference is that an mvcMatcher also triggers the sercurity chain rule all resource file extensions.
-    // First mandate that the inbound request carries a token (without yet specifying details)
-    // @formatter:off
-    http
-        .authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}").hasAuthority("SCOPE_assortment.write")
-            .anyRequest().permitAll()
-        )
-        .oauth2ResourceServer((oauth2) -> oauth2
-            .jwt(Customizer.withDefaults())
-        );
-    // @formatter:on
 
-    // TODO: I think this is overly strict, as it is no longer possible to issue GET requests...
+    // See: https://stackoverflow.com/a/76638755/13805480
+    // Changed policy for remaining "anyRequest" to permit all, as we want the remaining endpoints
+    // to be unprotected / publicly accessible.
+
+    http
+        // First pattern matcher rule: require token for write operations on assortment
+        .authorizeHttpRequests((authorize) -> authorize
+            // The actual rules...
+            .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
+            .hasAuthority("SCOPE_assortment.write"))
+        // ...
+        // Second pattern matcher rule: require token for write operations on local store stock
+        // This one is extended by user matching in the respective endpoint
+        .authorizeHttpRequests((authorize) -> authorize
+            // The actual rules...
+            .requestMatchers(HttpMethod.POST, "/bookstore/stocklocations/{stocklocation}/{isbn}")
+            .hasAuthority("SCOPE_stock.write")) // <- the permit all must be in the last rule (earlier definitions always win, so the default action must be the last one to mention.)s
+        // ...
+        // Also a pattern matcher rule to apply for anything else that has not yet been configured
+        .authorizeHttpRequests((authorize) -> authorize
+          .anyRequest().permitAll()
+        )
+        // Finally: grand public access to all remaining endpoints
+        .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
 
     return http.build();
-
-
-    // TODO: Refine filter chain as described on SO:
-    // https://stackoverflow.com/a/76638755/13805480
-
-    // TODO: figure out why this security rule does not check the SCOPE.
-    // TODO: I can access this with a different scope and it not clear why...
-    // This first httpSecurity configuration mandates an assortment.write scoped token is provided for adding new books to the assortment.
-//    http.mvcMatcher("/bookstore/isbns/{isbn}").authorizeRequests()
-//        // ...then refine the previous mvcMatcher...
-//        .mvcMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
-//        // ...and only allow accesss if the token is associated to the assortment.read scope...
-//        .access("hasAuthority('SCOPE_assortment.write')")
-//        // finally configure to obtain the scope information used abote to be extracted from the jwt issued but the OAuth2 authorization server.
-//        .and().oauth2ResourceServer().jwt();
-//    return http.build();
   }
 }
