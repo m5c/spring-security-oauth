@@ -22,6 +22,7 @@ public class GlobalStockController {
     }
 
     // See PreAuthorize syntax documentation: https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html
+//    @PreAuthorize("authentication.name == #city and hasRole('ROLE_USER')")
     @PreAuthorize("authentication.name == #city")
     @PostMapping("/bookstore/stocklocations/{stocklocation}/{isbn}")
     public void setStock(@PathVariable("stocklocation") String city, @PathVariable("isbn") Long isbn, @RequestBody Integer amount) {

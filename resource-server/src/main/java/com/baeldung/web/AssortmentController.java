@@ -2,6 +2,7 @@ package com.baeldung.web;
 
 import eu.kartoffelquadrat.bookstoreinternals.AssortmentImpl;
 import eu.kartoffelquadrat.bookstoreinternals.BookDetailsImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
@@ -22,6 +23,7 @@ public class AssortmentController {
         return AssortmentImpl.getInstance().getBookDetails(isbn);
     }
 
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/bookstore/isbns/{isbn}")
     public void addBookToAssortment(@RequestBody BookDetailsImpl bookDetails) {
         AssortmentImpl.getInstance().addBookToAssortment(bookDetails);

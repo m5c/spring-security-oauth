@@ -15,6 +15,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+  /**
+   * This filter chain intercepts any request to the client that does not yet contain a supplemental
+   * OAuth2 token. If missing the sender is instead forwarded to the login page of the authorization
+   * server.
+   *
+   * @param http
+   * @return
+   * @throws Exception
+   */
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())

@@ -32,7 +32,7 @@ public class DefaultSecurityConfig {
     UserDetails assortmentExtender = User.withDefaultPasswordEncoder()
         .username("AssortmentExtender")
         .password("password")
-        .roles("USER") // TODO: figure out what role is appropriate
+        .roles("ADMIN")
         .build();
 
     UserDetails montrealStoreManager = User.withDefaultPasswordEncoder()
