@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -34,8 +35,11 @@ public class DefaultSecurityConfig {
    * restrict access on ADMIN endpoints by proxy services invoked by ordinary users.
    * See: https://stackoverflow.com/a/68723813/13805480
    * See: https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authorization-server/
+   *
    * @return
    */
+
+  // TODO: Add counterpart for this JWT extender to the Resource Server, so it has a notion of roles
   @Bean
   OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
     return context -> {
@@ -51,7 +55,6 @@ public class DefaultSecurityConfig {
   @Bean
   UserDetailsService users() {
 
-    // TODO: add user for assortment (write) access.
     // The database knows several users: 2 generic users for comments and catalogue,
     // several for the individual stock locactions
     UserDetails assortmentExtender =
