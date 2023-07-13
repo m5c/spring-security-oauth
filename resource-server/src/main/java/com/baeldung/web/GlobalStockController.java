@@ -1,6 +1,7 @@
 package com.baeldung.web;
 
 import eu.kartoffelquadrat.bookstoreinternals.GlobalStockImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -20,6 +21,8 @@ public class GlobalStockController {
         return GlobalStockImpl.getInstance().getStock(city, isbn);
     }
 
+    // See PreAuthorize syntax documentation: https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html
+    @PreAuthorize("authentication.name == #city")
     @PostMapping("/bookstore/stocklocations/{stocklocation}/{isbn}")
     public void setStock(@PathVariable("stocklocation") String city, @PathVariable("isbn") Long isbn, @RequestBody Integer amount) {
 

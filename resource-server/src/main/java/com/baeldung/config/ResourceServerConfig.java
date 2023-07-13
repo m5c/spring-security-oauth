@@ -36,16 +36,17 @@ public class ResourceServerConfig {
         .authorizeHttpRequests((authorize) -> authorize
             // The actual rules...
             .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
-            .hasAuthority("SCOPE_assortment.write"))
+            .hasAuthority("SCOPE_assortment.write")) // technically we have to check user role here, too - so that only admins can enable this delegation, not standard users.
         // ...
         // Second pattern matcher rule: require token for write operations on local store stock
         // This one is extended by user matching in the respective endpoint
         .authorizeHttpRequests((authorize) -> authorize
             // The actual rules...
             .requestMatchers(HttpMethod.POST, "/bookstore/stocklocations/{stocklocation}/{isbn}")
-            .hasAuthority("SCOPE_stock.write")) // <- the permit all must be in the last rule (earlier definitions always win, so the default action must be the last one to mention.)s
+            .hasAuthority("SCOPE_stock.write"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
         // ...
         // Also a pattern matcher rule to apply for anything else that has not yet been configured
+        // Depending on your application you either want to denyAll or permitAll.
         .authorizeHttpRequests((authorize) -> authorize
           .anyRequest().permitAll()
         )

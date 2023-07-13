@@ -30,31 +30,31 @@ public class DefaultSecurityConfig {
     // The database knows several users: 2 generic users for comments and catalogue,
     // several for the individual stock locactions
     UserDetails assortmentExtender = User.withDefaultPasswordEncoder()
-        .username("assortmentextender")
+        .username("AssortmentExtender")
         .password("password")
         .roles("USER") // TODO: figure out what role is appropriate
         .build();
 
     UserDetails montrealStoreManager = User.withDefaultPasswordEncoder()
-        .username("montréal")
+        .username("Montréal")
         .password("password")
         .roles("USER")
         .build();
 
     UserDetails munchenStoreManager = User.withDefaultPasswordEncoder()
-        .username("münchen")
+        .username("München")
         .password("password")
         .roles("USER")
         .build();
 
     UserDetails osterhofenStoreManager = User.withDefaultPasswordEncoder()
-        .username("osterhofen")
+        .username("Osterhofen")
         .password("password")
         .roles("USER")
         .build();
 
     UserDetails lyonStoreManager = User.withDefaultPasswordEncoder()
-        .username("lyon")
+        .username("Lyon")
         .password("password")
         .roles("USER")
         .build();
