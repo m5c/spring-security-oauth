@@ -2,7 +2,7 @@ package com.github.m5c.config;
 
 /**
  * This is almost an exact copy of the client clonfiguration provided by the Baeldung example.
- * It builds the standard login page. (?)
+ * It builds the standard login page.
  */
 
 import org.springframework.context.annotation.Bean;

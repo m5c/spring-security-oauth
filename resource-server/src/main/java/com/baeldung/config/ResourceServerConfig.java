@@ -3,7 +3,6 @@ package com.baeldung.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,31 +26,28 @@ public class ResourceServerConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-    // See: https://stackoverflow.com/a/76638755/13805480
-    // Changed policy for remaining "anyRequest" to permit all, as we want the remaining endpoints
-    // to be unprotected / publicly accessible.
-
     http
         // First pattern matcher rule: require token for write operations on assortment
         .authorizeHttpRequests((authorize) -> authorize
             // The actual rules...
-            .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}")
-            .hasAuthority("SCOPE_assortment.write")) // technically we have to check user role here, too - so that only admins can enable this delegation, not standard users.
+            .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}").hasAuthority(
+                "SCOPE_assortment.write")) // technically we have to check user role here, too - so that only admins can enable this delegation, not standard users.
         // ...
         // Second pattern matcher rule: require token for write operations on local store stock
         // This one is extended by user matching in the respective endpoint
         .authorizeHttpRequests((authorize) -> authorize
             // The actual rules...
             .requestMatchers(HttpMethod.POST, "/bookstore/stocklocations/{stocklocation}/{isbn}")
-            .hasAuthority("SCOPE_stock.write"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
+            .hasAuthority(
+                "SCOPE_stock.write"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
         // ...
-        // Also a pattern matcher rule to apply for anything else that has not yet been configured
-        // Depending on your application you either want to denyAll or permitAll.
-        .authorizeHttpRequests((authorize) -> authorize
-          .anyRequest().permitAll()
-        )
-        // Finally: grand public access to all remaining endpoints
-        .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
+        // Finally: grant public access to all remaining endpoints
+        .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
+        .oauth2ResourceServer(oauth2 -> {
+          oauth2.jwt(jwt -> {
+            jwt.jwtAuthenticationConverter(new FusedClaimConverter());
+          });
+        });
 
     return http.build();
   }

@@ -49,5 +49,9 @@ public class AssortmentProxyController {
     // 2) A get (same as before), to get new list of books (unsecured)
     return this.webClient.get().uri("http://127.0.0.1:8090/bookstore/isbns").retrieve()
         .bodyToMono(String[].class).block();
+
+    // Only for debugging, this call checks which authorities have been extracted from JWT claims.
+    //    return this.webClient.get().uri("http://127.0.0.1:8090/authorities")
+    //        .attributes(oauth2AuthorizedClient(authorizedClient)).retrieve().bodyToMono(String.class).block();
   }
 }

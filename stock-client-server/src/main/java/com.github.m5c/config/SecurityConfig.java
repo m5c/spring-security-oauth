@@ -20,9 +20,6 @@ public class SecurityConfig {
    * OAuth2 token. If missing the sender is instead forwarded to the login page of the authorization
    * server.
    *
-   * @param http
-   * @return
-   * @throws Exception
    */
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

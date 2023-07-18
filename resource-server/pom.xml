@@ -8,6 +8,7 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <!-- Note: Process FORK for debugging has been deprecated with v3 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>

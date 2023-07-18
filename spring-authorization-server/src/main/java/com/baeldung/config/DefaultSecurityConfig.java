@@ -1,10 +1,8 @@
 package com.baeldung.config;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -31,23 +29,28 @@ public class DefaultSecurityConfig {
   }
 
   /**
-   * This bean extends the default content of JWTs by an additional ROLE field, which is needed to
-   * restrict access on ADMIN endpoints by proxy services invoked by ordinary users.
-   * See: https://stackoverflow.com/a/68723813/13805480
-   * See: https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authorization-server/
+   * This bean extends the default content of JWTs by an additional "role" claim, listing the
+   * resource owners roles (without the ROLE_ prefix) https://stackoverflow.com/a/68723813/13805480
+   * See:
+   * https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authorization-server/
+   * The ResourceServer showcases a counterpart to handle that information. See
+   * RS.ResourceServerConfig
    *
-   * @return
+   * @return OAuth2TokenCustomizer overloaded configuration.
    */
-
-  // TODO: Add counterpart for this JWT extender to the Resource Server, so it has a notion of roles
   @Bean
   OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
     return context -> {
       if (context.getTokenType() == OAuth2TokenType.ACCESS_TOKEN) {
         Authentication principal = context.getPrincipal();
-        Set<String> authorities = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-        context.getClaims().claim("roles", authorities);
+
+        // Here we chop off the prefix, to respect JWT conventions. The ROLE prefix is only relevant
+        // once the information is extracted back to the principal authority list.
+        Set<String> enumeratedRoles =
+            principal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .map(roleString -> roleString.split("_")[1]).collect(Collectors.toSet());
+
+        context.getClaims().claim("role", enumeratedRoles);
       }
     };
   }
