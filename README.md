@@ -1,7 +1,7 @@
 # Spring Security OAuth2 Samples
 
 A minimal sample setup that
-reflects [OAuth2 servive access delecation](https://datatracker.ietf.org/doc/html/rfc6749) for
+reflects [OAuth2 service access delegation](https://datatracker.ietf.org/doc/html/rfc6749) for
 administrators and users.
 
 ## About
@@ -40,7 +40,7 @@ off-the-shelf implementation.
 
 #### Communication Layout
 
-The effective OAuth2 communication layout varries, depending on how roles are sperated or fused:
+The effective OAuth2 communication layout varies, depending on how roles are separated or fused:
 
 * In essence, these variants differ in *how the granted authorization* is transferred back from
   **Authorization Server** to **Client**.
@@ -76,7 +76,7 @@ Below schema illustrates the communication flow for the standard **Authorization
      +--------+                               +---------------+
 ```
 
-> Note: The above layout is based on the official protocol specifiation. Additional arrows were
+> Note: The above layout is based on the official protocol specification. Additional arrows were
 > added to better illustrate the *Request Reply* nature of the underlying HTTP protocol.
 > Steps ```B.1-B.3``` reflect the **Authorization Code** communication.
 
@@ -86,7 +86,7 @@ This repository reflects the [standard protocol entities](#oauth2-protocol). How
 single *Client*, the repo contains two, to better illustrate the two most prominent use cases of
 access delegation with OAuth2:
 
-### Authorization Sceanrios
+### Authorization Scenarios
 
 1) Delegation of *Resource Server* API access on behalf of a service *Administrator*. The *Resource
    Owner* is an administrator of the *Resource Server*.  
@@ -105,27 +105,27 @@ This repository contains the following four services:
 
 * [**Resource Server**](resource-server): A slightly modified version
   of [the BookStore](https://github.com/m5c/BookStoreInternals). The relatively small API has been
-  secured, to allow for OAuth2 secured access of selected REST endoints.
+  secured, to allow for OAuth2 secured access of selected REST endpoints.
 * [**Authorization Server**](spring-authorization-server): A mostly off the shelf implementation of
   Springs default OAuth2 *Authorization Server*.
 * [**Admin Client (Assortment Extender)**](assortment-client-server): A first OAuth2 *Client*, which
   uses the OAuth2
-  protocol to request access, and subsequenlty modify the bookstore's assortment. Note that this
+  protocol to request access, and subsequently modify the bookstore's assortment. Note that this
   catalogue of all indexed books is considered under the governance of a *Resource Service*
   administrator.
 * [**User Client (Stock Replenisher)**](stock-client-server): A second OAuth2 *Client*, which uses
   the OAuth2
-  protocol to request access, and subsequenlty modify a local store's stock (amount of copies in
-  store). The corresponding resource is considered under the gouvernance of a local store manager
+  protocol to request access, and subsequently modify a local store's stock (amount of copies in
+  store). The corresponding resource is considered under the governance of a local store manager
   user, who grants access to the selected REST resource of the **Resource Server** on their behalf.
 
 Illustration of the secured access:  
-![boostore-secured](bookstore-secured.png)
+![bookstore-secured](bookstore-secured.png)
 
 * The right side illustrates the REST resources and access points of the modified bookstore. Circles
-  with thicker stroke indicate REST methods that are access portected.
+  with thicker stroke indicate REST methods that are access protected.
 * The clients on the left each request access to one respective protected resource using the OAuth2
-  protocal. Subsequently, these services interact with the bookstore on behalf of the grantee.
+  protocol. Subsequently, these services interact with the bookstore on behalf of the grantee.
     * **Client 1**: *Assortment Extender* is granted access to the **[PUT]** operation on
       resource `/bookstore/isbns/{isbn}`, which allows adding new books to the global assortment.
       This resource is considered owned by an *administrator* of the *Resource Server*. Therefore,
@@ -144,28 +144,28 @@ the [original Baeldung example](https://www.baeldung.com/spring-security-oauth-a
 The main difference is that the referenced OAuth2 example showcases no notion for user-owned
 resources, and hence matching of resource and username. Likewise, the original configuration does
 not verify user roles, to
-ensure access is matched agains user priviledges.
+ensure access is matched against user privileges.
 
 Several changes were necessary, to implement these standard usecases:
 
 * The original *Resource Server* was replaced by
-  the [BookStore](https://github.com/m5c/BookStoreInternals), to privide a minimum of API complexity
-  and legit context for the two types of access delection: *Service-User* accesss delegation and
+  the [BookStore](https://github.com/m5c/BookStoreInternals), to provide a minimum of API complexity
+  and legit context for the two types of access delegation: *Service-User* access delegation and
   *Service-Admin* access delegation.
-* One protected resource has been configured to use Spring's expresison language (SpEL), to
-  crosscheck a URL parameter of the resource agains their username. This scenario is indicated by
+* One protected resource has been configured to use Spring's expression language (SpEL), to
+  crosscheck a URL parameter of the resource against their username. This scenario is indicated by
   mappings between *red* markers in the figure above.
     * The access protection takes place [in the *Resource Server*, and uses a ```@PreAuthorize```
-      anotation](resource-server/src/main/java/com/baeldung/web/GlobalStockController.java).
+      annotation](resource-server/src/main/java/com/baeldung/web/GlobalStockController.java).
 * A second protected resource has been configured to require an *Administrator* role of the
-  authoirizing user. This second scenario is indicated by mappings between *blue* markers in the
+  authorizing user. This second scenario is indicated by mappings between *blue* markers in the
   figure above.  
   This second scenario required several technical changes:
     * By default, details on the authorizing user (*Resource Owner*) and accessing *Client* are
       transmitted by means of a signed `Json Web Token`. The token is used by the *Client* while
-      acessing a
+      accessing a
       protected method at the *Resource Server*. Token details did not contain information on the
-      *Resource Owner*'s group affiliation (administraor or standard user). Therefore, the [
+      *Resource Owner*'s group affiliation (administrator or standard user). Therefore, the [
       *Authorization Server*](spring-authorization-server) issuing this token has been reconfigured
       to contain this information in the token.
     * Likewise the receiving end does not readily consider the additional token information (also
@@ -178,7 +178,7 @@ Several changes were necessary, to implement these standard usecases:
 ## Usage
 
 TODO: REVISE.
-This section explains how to start up and test the microservise, to verify correct configuration of
+This section explains how to start up and test the micro service, to verify correct configuration of
 the protocol.
 
 Here is how to start up the service interplay and test secured resource access:
@@ -203,11 +203,11 @@ Here is how to start up the service interplay and test secured resource access:
 * Original Baeldung tutorial: [Baeldung](https://www.baeldung.com/spring-security-oauth-auth-server)
 * Above changes: [GitHub: m5c](http://github.com/m5c)
 
-### Commnity discussions
+### Community discussions
 
 Essnetial parts of described security roles were based on recommendations from the StackOverflow
 community.
-Notably these two posts provide essential fingerposts and technical details:
+Notably these two posts provide essential finger posts and technical details:
 
 * *...*
 * *...*
