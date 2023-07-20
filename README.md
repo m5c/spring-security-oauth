@@ -1,7 +1,7 @@
 # Spring Security OAuth2 Samples
 
 A minimal sample setup that
-reflects [OAuth2 service access delegation](https://datatracker.ietf.org/doc/html/rfc6749) for
+reflects [OAuth2 service access delegation](https://datatracker.ietf.org/doc/html/rfc6749) for service
 administrators and users.
 
 ## About
@@ -22,7 +22,7 @@ see: [Baeldung.com](https://www.baeldung.com/spring-security-oauth-auth-server).
 Purpose of OAuth2 is to authorize a third party service (named *Client*) to access secured
 endpoints of an existing API (*Resource Server*).
 The interest of OAuth2 is to enable a secure access, without requiring the original API user (*
-*Resource Owner**) to share their credentials with the *Client*. This is achieved by means of
+Resource Owner*) to share their credentials with the *Client*. This is achieved by means of
 cryptographic tokens issued by an additional service (*Authorization Server*).
 
 As such, the key entities in any OAuth2 interplay are the following three RESTful services:
@@ -44,13 +44,13 @@ The effective OAuth2 communication layout varies, depending on how roles are sep
 
 * In essence, these variants differ in *how the granted authorization* is transferred back from
   **Authorization Server** to **Client**.
-* The above process of transferring the authorization is called [**Authorization Grant
-  **](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3) in protocol jargon.
-* There are different **Authorization Grant** types, but here we only deal with the standard case:
+* The above process of transferring the authorization is called [*x*Authorization Grant
+  *](https://datatracker.ietf.org/doc/html/rfc6749#section-1.3) in protocol jargon.
+* There are different *Authorization Grant* types, but here we only deal with the standard case:
     * Parties place minimal trust in one another.
     * Parties are fully separated executables (services).
-* This standard type is called [**Authorization Code Grant
-  **](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), in protocol jargon.
+* This standard type is called [*Authorization Code Grant
+  *](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), in protocol jargon.
 
 Below schema illustrates the communication flow for the standard **Authorization Code** type:
 
@@ -194,7 +194,7 @@ The four aforementioned services must be launched in the following order:
 
 1) **Authorization Server**
 2) **Resource Server**
-3) **Client**s: Assortment Extender, Stock Replenisher
+3) Both **Client**s: Assortment Extender, Stock Replenisher
 
 Use the same launch command for every service, from the respective root
 directory: `mvn spring-bookt:run`
