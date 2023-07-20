@@ -202,18 +202,23 @@ directory: `mvn spring-bookt:run`
 ### Testing Anonymous Access
 
 The BookStore runs on port `8090`, so we can use any HTTP client to test access.
-For convenience this repo hosts [a prepared ARC file](sample-queries.arc), for easy testing of sample queries with the [Advanced Rest Client](https://www.advancedrestclient.com).
+For convenience this repo hosts [a prepared ARC file](sample-queries.arc), for easy testing of
+sample queries with the [Advanced Rest Client](https://www.advancedrestclient.com).
 
 Alternatively these `curl` command allow quick testing of selected endpoints of the BookStore API:
 
- * Get list of all books in assortment: `curl -X GET http://127.0.0.1:8090/bookstore/isbns`
- * Look up amount of Harry Potter books in Lyon store: `curl -X GET http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385`
+* Get list of all books in assortment:  
+  `curl -X GET http://127.0.0.1:8090/bookstore/isbns`
+* Look up amount of Harry Potter books in Lyon store:  
+  `curl -X GET http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385`
 
 The above commands are not access restricted and must return valid backend data.
 
-Next you can attempt direct anonymous access to the two secured endpoints. Both must fail with return code `403 Forbidden`, for the below curl commands do not contain an OAuth2 token:
+Next you can attempt direct anonymous access to the two secured endpoints: Both must fail with
+return code `403 Forbidden`, for the below curl commands do not contain an OAuth2 token:
 
- * Attempt to add a new book to the assortment:  
+* Attempt to add a new book to the assortment:
+
 ```bash
 curl -X PUT http://127.0.0.1:8090/bookstore/isbns/3518368540 \
     -H "Content-Type: application/json" \
@@ -226,19 +231,63 @@ curl -X PUT http://127.0.0.1:8090/bookstore/isbns/3518368540 \
    }"
 ```
 
- * Attempt to change to amount of Harry Potter copies in the Lyon store:  
+* Attempt to change to amount of Harry Potter copies in the Lyon store:
+
 ```bash
    curl -X POST http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385 \
    -H "Content-Type: application/json" \
    -d "1000"
 ```
 
-
 ### Testing Authorized Access
 
-Each of the provided *Client*s...
-Explanation of the two *Client* service modus operandi.
-Note that restart / session cookie delete required.
+The *Client*s are configures to run through the OAuth2 dance, when first requested to perform a
+delegated operation. In both cases they act as proxies, that is to say when a certain of their
+respective endpoints is accessed, this triggers request for authoriation and subsequent BookStore
+API access.
+
+More precisely, this is how you can test each *Client*:
+
+* **Assortment Extender**: Access the one and only REST
+  endpoint: [```[GET] http://127.0.0.1:8080/assortmentextension```](http://127.0.0.1:8080/assortmentextension)
+  with your browser.
+    * The *Client* will internally try to attempt an invocation of the *Resource Server*'s protected
+      endpoint: ```[PUT] http://127.0.0.1:8090/bookstore/isbns/3518368540```
+    * However, the *Client* is also configured to first obtain clearance for direct access. This is
+      why
+      it triggers the OAuth2 dance and forwards your browser to the *Authorization Server*'s login
+      page.
+    * Login with the credentials ```AssortmentExtender``` / ```password```.
+    * You will be redirected to the *Client*s proxy endpoint, the *Client* internally performs the
+      delegate call and returns the result.
+    * The *Resource Server*, upon receipt of the *Client's* JWT, [ensures the grantee is a *Resource
+      Server* admin](resource-server/src/main/java/com/baeldung/web/AssortmentController.java), and
+      grants access.
+    * The returned list of isbn numbers now contains an additional entry, `3518368540`, which
+      represents the newly added book.
+
+* **Stock Replenisher**: Access the one and only REST
+  endpoint: [```[GET] http://127.0.0.1:8081/stockextension/lyon/```](http://127.0.0.1:8081/stockextension/lyon/)
+  with your browser.
+    * The *Client* will internally try to attempt an invocation of the *Resource Server*'s protected
+      endpoint: ```[POST] http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385```
+    * However, once more the *Client* is also configured to first obtain clearance for direct
+      access. This is why it triggers the OAuth2 dance and forwards your browser to the
+      *Authorization Server*'s login page.
+    * Login with the credentials ```Lyon``` / ```password```.  
+      Note that the username here must match the URL substring, indicating resource governance.
+    * You will be redirected to the *Client*s proxy endpoint, the *Client* internally performs the
+      delegate call and returns the result.
+    * The *Resource Server*, upon receipt of the *Client's*
+      JWT, [ensures the grantee's name matches the store location](resource-server/src/main/java/com/baeldung/web/GlobalStockController.java): "
+      Lyon"
+    * The return number, indicating the amount of Harry Potter books in stock in Lyon is now
+      augmented by 100.
+
+> Note: Restart the backend or clear your browser's cached cookies when you test the *Client*s
+> sequnetially. Otherwise, the *Client* considers you already logged in an attempts to use the wrong
+> authorization for delegated access. The *Client*s internal request to the *Resource Server* will
+> then be blocked by the security policies in place.
 
 ## Contact / Pull Requests
 
