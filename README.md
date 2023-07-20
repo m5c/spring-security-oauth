@@ -175,26 +175,70 @@ Several changes were necessary, to implement these standard usecases:
       group information, to decide on accept / reject of incoming requests](resource-server/src/main/java/com/baeldung/web/AssortmentController.java)
       from the OAuth2 *Client*.
 
-## Usage
+## Run Instructions
 
-TODO: REVISE.
-This section explains how to start up and test the micro service, to verify correct configuration of
-the protocol.
+This section explains how to start up the sample micro service, test correct execution of the
+protocol and access protection.
 
-Here is how to start up the service interplay and test secured resource access:
+### Preliminaries
 
-0) Add this entry to your `etc/hosts` file: `127.0.0.1 auth-server`
-1) Start the Authorization Server:  
-   `cd spring-authorization-server; mvn clean package spring-boot:run`
-2) Start the Resource Server:  
-   `cd resource-server; mvn clean package spring-boot:run`
-3) Start the Client:  
-   `cd client-server; mvn clean package spring-boot:run`
-4) Access the client:  
-   Open [http://127.0.0.1:8080/articles](http://127.0.0.1:8080/assortmentextensions)  
-   Use the credentials "assortmentextender", "password"
-5) Verify a new book is in the catalogue, and can be publicly accessed:  
-   `curl -X GET http://127.0.0.1:8090/bookstore/isbns/3518368540`
+Before you start up any service, add the following entry to you `/etc/hosts` file:  
+`127.0.0.1 auth-server`
+
+This allows refering to the *Authorization Server* by domain name, which is needed because otherwise
+all services are resolved localhost and associated session cookies override another.
+
+### Service Startup
+
+The four aforementioned services must be launched in the following order:
+
+1) **Authorization Server**
+2) **Resource Server**
+3) **Client**s: Assortment Extender, Stock Replenisher
+
+Use the same launch command for every service, from the respective root
+directory: `mvn spring-bookt:run`
+
+### Testing Anonymous Access
+
+The BookStore runs on port `8090`, so we can use any HTTP client to test access.
+For convenience this repo hosts [a prepared ARC file](sample-queries.arc), for easy testing of sample queries with the [Advanced Rest Client](https://www.advancedrestclient.com).
+
+Alternatively these `curl` command allow quick testing of selected endpoints of the BookStore API:
+
+ * Get list of all books in assortment: `curl -X GET http://127.0.0.1:8090/bookstore/isbns`
+ * Look up amount of Harry Potter books in Lyon store: `curl -X GET http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385`
+
+The above commands are not access restricted and must return valid backend data.
+
+Next you can attempt direct anonymous access to the two secured endpoints. Both must fail with return code `403 Forbidden`, for the below curl commands do not contain an OAuth2 token:
+
+ * Attempt to add a new book to the assortment:  
+```bash
+curl -X PUT http://127.0.0.1:8090/bookstore/isbns/3518368540 \
+    -H "Content-Type: application/json" \
+    -d "{
+   \"isbn\":3518368540,
+   \"title\":\"Homo Faber\",
+   \"author\":\"Max Frisch\",
+   \"priceInCents\":1610,
+   \"bookAbstract\":\"Max Frischs 1957 novel \"Homo faber\" describes people in the technological age who believe they can organize life according to the laws of logic and science. According to Frisch, modern man lives past himself and surrenders to the feasibility euphoria of technology.\"
+   }"
+```
+
+ * Attempt to change to amount of Harry Potter copies in the Lyon store:  
+```bash
+   curl -X POST http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385 \
+   -H "Content-Type: application/json" \
+   -d "1000"
+```
+
+
+### Testing Authorized Access
+
+Each of the provided *Client*s...
+Explanation of the two *Client* service modus operandi.
+Note that restart / session cookie delete required.
 
 ## Contact / Pull Requests
 
@@ -209,5 +253,7 @@ Essnetial parts of described security roles were based on recommendations from t
 community.
 Notably these two posts provide essential finger posts and technical details:
 
-* [*Configure Spring Boot Resource Server to pick up additional JWT claims*](https://stackoverflow.com/questions/76702695/spring-security-preauthorize-role-does-not-pick-up-jwt-claim)
-* [*User scoped Resource Server access protection with Spring OAuth2*](https://stackoverflow.com/questions/76635448/how-configure-a-user-specific-resource-authorization-with-oauth2-spring-security)
+* [*Configure Spring Boot Resource Server to pick up additional JWT
+  claims*](https://stackoverflow.com/questions/76702695/spring-security-preauthorize-role-does-not-pick-up-jwt-claim)
+* [*User scoped Resource Server access protection with Spring
+  OAuth2*](https://stackoverflow.com/questions/76635448/how-configure-a-user-specific-resource-authorization-with-oauth2-spring-security)
