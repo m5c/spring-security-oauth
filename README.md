@@ -203,11 +203,11 @@ Here is how to start up the service interplay and test secured resource access:
 * Original Baeldung tutorial: [Baeldung](https://www.baeldung.com/spring-security-oauth-auth-server)
 * Above changes: [GitHub: m5c](http://github.com/m5c)
 
-### Community discussions
+### Community Contributions
 
 Essnetial parts of described security roles were based on recommendations from the StackOverflow
 community.
 Notably these two posts provide essential finger posts and technical details:
 
-* *...*
-* *...*
+* [*Configure Spring Boot Resource Server to pick up additional JWT claims*](https://stackoverflow.com/questions/76702695/spring-security-preauthorize-role-does-not-pick-up-jwt-claim)
+* [*User scoped Resource Server access protection with Spring OAuth2*](https://stackoverflow.com/questions/76635448/how-configure-a-user-specific-resource-authorization-with-oauth2-spring-security)
