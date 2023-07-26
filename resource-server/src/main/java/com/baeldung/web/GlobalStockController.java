@@ -21,10 +21,13 @@ public class GlobalStockController {
         return GlobalStockImpl.getInstance().getStock(city, isbn);
     }
 
+    // Old PreAuthorize, that compares account name to city, string match.
+    //    @PreAuthorize("authentication.name == #city")
+    // Now we're interested in allowing accounts that are associated to city by domain model.
     // See PreAuthorize syntax documentation: https://docs.spring.io/spring-security/site/docs/3.0.x/reference/el-access.html
-//    @PreAuthorize("authentication.name == #city and hasRole('ROLE_USER')")
-//    @PreAuthorize("authentication.name == #city and authentication.authorities.contains('USER')" )
-    @PreAuthorize("authentication.name == #city")
+    // TODO: Write SpEL that resolves city localstock object and traverses to employee list.
+    // Possibly I can get the singleton like so: https://stackoverflow.com/q/7585627/13805480
+    @PreAuthorize("T(eu.kartoffelquadrat.bookstoreinternals.GlobalStockImpl).getInstance().isEmployed(#city, authentication.name)")
     @PostMapping("/bookstore/stocklocations/{stocklocation}/{isbn}")
     public void setStock(@PathVariable("stocklocation") String city, @PathVariable("isbn") Long isbn, @RequestBody Integer amount) {
 

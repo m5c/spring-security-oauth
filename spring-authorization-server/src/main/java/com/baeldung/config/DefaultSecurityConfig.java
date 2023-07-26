@@ -79,8 +79,12 @@ public class DefaultSecurityConfig {
     UserDetails lyonStoreManager =
         User.withDefaultPasswordEncoder().username("Lyon").password("password").roles("USER")
             .build();
+
+    UserDetails marieCurie =
+        User.withDefaultPasswordEncoder().username("Curie").password("password").roles("USER")
+            .build();
     return new InMemoryUserDetailsManager(assortmentExtender, montrealStoreManager,
-        munchenStoreManager, osterhofenStoreManager, lyonStoreManager);
+        munchenStoreManager, osterhofenStoreManager, lyonStoreManager, marieCurie);
   }
 
 }

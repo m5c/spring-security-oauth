@@ -33,11 +33,12 @@
         <!-- Reference added to bookstore internals code. Rest controllers act only as proxy
         classes. To install the bookstore-internals library, see:
         https://github.com/m5c/BookStoreInternals
+        NOTE: Switched to "employees" version to test SpEL statements that traverse domain model.
         -->
         <dependency>
             <groupId>eu.kartoffelquadrat</groupId>
             <artifactId>bookstoreinternals</artifactId>
-            <version>1.5</version>
+            <version>1.5-store-employees</version>
         </dependency>
     </dependencies>
 

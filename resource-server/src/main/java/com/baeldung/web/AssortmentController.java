@@ -34,13 +34,7 @@ public class AssortmentController {
     return AssortmentImpl.getInstance().getBookDetails(isbn);
   }
 
-  // TODO: Figure out if there is a way to check the ROLE, not the NAME.
-//  @PreAuthorize("authentication.name == 'AssortmentExtender'") // <-- works but is a hack.
-//  @PreAuthorize("authentication.authorities.contains('ROLE_ADMIN')")
-//  @PreAuthorize("hasAnyAuthority('ADMIN')") <= Unclear why this is not extracted from the token...
-  // DEBUG of the authenitcation.prinicpa shows that the role is correclty registeres in the "auth" claim.
-//  @PreAuthorize("hasAuthority('ADMIN')")
-  @PreAuthorize("hasRole('ADMIN')") // <==== WHY DOES THIS FAIL, the ROLE is in the JWT!!!
+  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/bookstore/isbns/{isbn}")
   public void addBookToAssortment(@RequestBody BookDetailsImpl bookDetails, final @AuthenticationPrincipal
   Jwt jwt, Authentication authentication) {
@@ -48,20 +42,8 @@ public class AssortmentController {
     // TODO: Either fix springs notion of the roles (extracted from jwt), or add manual check for admin role here
     String encryptedToken = jwt.getTokenValue();
     System.out.println("\nDEBUG TOKEN INFO:\n"+encryptedToken);
-//    String[] tokenChunks = encryptedToken.split("\\.");
-//    Base64.Decoder decoder = Base64.getUrlDecoder();
-//    String header = new String(decoder.decode(tokenChunks[0]));
-//    String payload = new String(decoder.decode(tokenChunks[1]));
-//    System.out.println("HEADER: "+header);
-//    System.out.println("PAYLOAD: "+payload);
-//
-//    // Also echk what information has been extracted by spring:
-//    Object principal = authentication.getPrincipal();
-////    System.out.println("User has authorities: " + userDetails.getAuthorities());
 
     AssortmentImpl.getInstance().addBookToAssortment(bookDetails);
-//    LinkedHashMap userVariables = new JwtUtil().extractAllClaims(jwt)
-
   }
 
   /**
