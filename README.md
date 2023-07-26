@@ -1,7 +1,8 @@
 # Spring Security OAuth2 Samples
 
 A minimal sample setup that
-reflects [OAuth2 service access delegation](https://datatracker.ietf.org/doc/html/rfc6749) for service
+reflects [OAuth2 service access delegation](https://datatracker.ietf.org/doc/html/rfc6749) for
+service
 administrators and users.
 
 ## About
@@ -49,7 +50,8 @@ The effective OAuth2 communication layout varies, depending on how roles are sep
 * There are different *Authorization Grant* types, but here we only deal with the standard case:
     * Parties place minimal trust in one another.
     * Parties are fully separated executables (services).
-* This standard type is called [*Authorization Code Grant*](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), in protocol jargon.
+* This standard type is called [*Authorization Code
+  Grant*](https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), in protocol jargon.
 
 Below schema illustrates the communication flow for the standard **Authorization Code** type:
 
@@ -273,8 +275,11 @@ More precisely, this is how you can test each *Client*:
     * However, once more the *Client* is also configured to first obtain clearance for direct
       access. This is why it triggers the OAuth2 dance and forwards your browser to the
       *Authorization Server*'s login page.
-    * Login with the credentials ```Lyon``` / ```password```.  
-      Note that the username here must match the URL substring, indicating resource governance.
+    * Login with the credentials ```Curie``` / ```password```.  
+      Note that the security is configured to query the BookStore's domain model. The Lyon store has
+      an employee "Marie Curie",
+      and [the SpEL expression `GlobalStockController`](resource-server/src/main/java/com/baeldung/web/GlobalStockController.java)
+      is configured to match OAuth2 principal name against the list of employees for the Lyon store.
     * You will be redirected to the *Client*s proxy endpoint, the *Client* internally performs the
       delegate call and returns the result.
     * The *Resource Server*, upon receipt of the *Client's*
