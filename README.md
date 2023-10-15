@@ -197,7 +197,7 @@ The four aforementioned services must be launched in the following order:
 3) Both **Client**s: Assortment Extender, Stock Replenisher
 
 Use the same launch command for every service, from the respective root
-directory: `mvn spring-bookt:run`
+directory: `mvn spring-boot:run`
 
 ### Testing Anonymous Access
 
