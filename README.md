@@ -186,7 +186,7 @@ Before you start up any service, add the following entry to you `/etc/hosts` fil
 `127.0.0.1 auth-server`
 
 This allows refering to the *Authorization Server* by domain name, which is needed because otherwise
-all services are resolved localhost and associated session cookies override another.
+all services are resolved to *localhost* and associated session cookies of individual services override another.
 
 ### Service Startup
 
