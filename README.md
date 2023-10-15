@@ -22,8 +22,7 @@ see: [Baeldung.com](https://www.baeldung.com/spring-security-oauth-auth-server).
 
 Purpose of OAuth2 is to authorize a third party service (named *Client*) to access secured
 endpoints of an existing API (*Resource Server*).
-The interest of OAuth2 is to enable a secure access, without requiring the original API user (*
-Resource Owner*) to share their credentials with the *Client*. This is achieved by means of
+The interest of OAuth2 is to enable a secure access, without requiring the original API user (*Resource Owner*) to share their credentials with the *Client*. This is achieved by means of
 cryptographic tokens issued by an additional service (*Authorization Server*).
 
 As such, the key entities in any OAuth2 interplay are the following three RESTful services:
