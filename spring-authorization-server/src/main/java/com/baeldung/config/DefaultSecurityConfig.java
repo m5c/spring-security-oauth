@@ -83,8 +83,22 @@ public class DefaultSecurityConfig {
     UserDetails marieCurie =
         User.withDefaultPasswordEncoder().username("Curie").password("password").roles("USER")
             .build();
+
+    UserDetails leonardCohen =
+        User.withDefaultPasswordEncoder().username("Cohen").password("password").roles("USER")
+            .build();
+
+    UserDetails angelaMerkel =
+        User.withDefaultPasswordEncoder().username("Merkel").password("password").roles("USER")
+            .build();
+
+    UserDetails maxPlank =
+        User.withDefaultPasswordEncoder().username("Plank").password("password").roles("USER")
+            .build();
+
     return new InMemoryUserDetailsManager(assortmentExtender, montrealStoreManager,
-        munchenStoreManager, osterhofenStoreManager, lyonStoreManager, marieCurie);
+        munchenStoreManager, osterhofenStoreManager, lyonStoreManager, marieCurie, leonardCohen,
+        angelaMerkel, maxPlank);
   }
 
 }
