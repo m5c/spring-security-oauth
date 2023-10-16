@@ -22,7 +22,8 @@ see: [Baeldung.com](https://www.baeldung.com/spring-security-oauth-auth-server).
 
 Purpose of OAuth2 is to authorize a third party service (named *Client*) to access secured
 endpoints of an existing API (*Resource Server*).
-The interest of OAuth2 is to enable a secure access, without requiring the original API user (*Resource Owner*) to share their credentials with the *Client*. This is achieved by means of
+The interest of OAuth2 is to enable a secure access, without requiring the original API user (*Resource Owner*) to share
+their credentials with the *Client*. This is achieved by means of
 cryptographic tokens issued by an additional service (*Authorization Server*).
 
 As such, the key entities in any OAuth2 interplay are the following three RESTful services:
@@ -248,8 +249,23 @@ API access.
 
 More precisely, this is how you can test each *Client*:
 
+#### Access on behalf of a Resource Server administrator
+
+This is the less common, by technically simpler OAuth2 scenario. A third party service is authorized to access or modify
+state of a resource that do not belong to specific user, i.e. a resource that is commonly only accessed by service
+administrators). 
+
+ > This scenario is simpler, because the only thing to verify for this authorization is the authorizer's
+privileges (ROLE = *admin*). The resource in question is not owned by a specific user or set of users, so not
+additional semantic links between user and resource need to be verified.  
+ 
+In this case the third party service [`assortment-client-server`](assortment-client-server) is authorized to access the
+list of all
+books known in the [`resource-server`](resource-server) (BookStore) assortment.
+
 * **Assortment Extender**: Access the one and only REST
-  endpoint: [```[GET] http://127.0.0.1:8080/assortmentextension```](http://127.0.0.1:8080/assortmentextension)
+  endpoint of the *Assortment Extender*
+  service: [```[GET] http://127.0.0.1:8080/assortmentextension```](http://127.0.0.1:8080/assortmentextension)
   with your browser.
     * The *Client* will internally try to attempt an invocation of the *Resource Server*'s protected
       endpoint: ```[PUT] http://127.0.0.1:8090/bookstore/isbns/3518368540```
@@ -266,8 +282,21 @@ More precisely, this is how you can test each *Client*:
     * The returned list of isbn numbers now contains an additional entry, `3518368540`, which
       represents the newly added book.
 
+#### Access on behalf of a Resource Server user
+
+This is the more common, and also technically more advanced OAuth2 scenario. A third party service is authorized to
+access or modify state of a resource semantically owned by a user or a set of users. 
+
+ > This scenario is more advanced, because authorization must not only verify the authorizer's role, but also the semantic link
+between user and stores instance, i.e. ensure the affiliation actually allows an authorization.  
+ 
+In this scenario the third party service [`stock-client-server`](stock-client-server) is authorized to access the stock
+of a specific branch location of the [`resource-server`](resource-server) (BookStore). The authorization is granted by an
+employee, of that location, i.e. any employee of that location is a legit resource owner.
+
 * **Stock Replenisher**: Access the one and only REST
-  endpoint: [```[GET] http://127.0.0.1:8081/stockextension/lyon/```](http://127.0.0.1:8081/stockextension/lyon/)
+  endpoint of the *Stock Replenisher*
+  service: [```[GET] http://127.0.0.1:8081/stockextension/lyon/```](http://127.0.0.1:8081/stockextension/lyon/)
   with your browser.
     * The *Client* will internally try to attempt an invocation of the *Resource Server*'s protected
       endpoint: ```[POST] http://127.0.0.1:8090/bookstore/stocklocations/Lyon/9780739360385```
