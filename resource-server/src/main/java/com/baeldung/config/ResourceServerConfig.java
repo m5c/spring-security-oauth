@@ -16,7 +16,7 @@ public class ResourceServerConfig {
   /**
    * This filterchain secures the BookStores API endpoints, so an OAuth token is required for
    * specific access. Additional security roles are added on a per-endpoint basis, when regex-url
-   * matching is not suffucuent (this is e.g. the case when part of the URL must be matched against
+   * matching is not sufficuent (this is e.g. the case when part of the URL must be matched against
    * the token resource owner).
    *
    * @param http configuration on which we can define pattern matcher and filter rules.
