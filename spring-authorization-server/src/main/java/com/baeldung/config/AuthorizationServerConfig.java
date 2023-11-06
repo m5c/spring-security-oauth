@@ -26,6 +26,10 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
+/**
+ * This configuration defines which third party services (OAuth2 Clients) exists, and which scopes
+ * they can obtain, when issuing a an access delegation request.
+ */
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
