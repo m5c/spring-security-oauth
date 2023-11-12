@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+
 import static org.springframework.util.StringUtils.capitalize;
 
 
@@ -45,15 +46,16 @@ public class StockProxyController {
         "http://127.0.0.1:8090/bookstore/stocklocations/" + storeLocation + "/" + harryPotterIsbn;
 
     // just for fun, try to access something that is blocked for OAuth2 clients
-    String blockedResource =
-        "http://127.0.0.1:8090/bookstore/stocklocations";
-    String locations = this.webClient.get().uri(blockedResource).retrieve().bodyToMono(String.class).block();
-    System.out.println(locations);
+//    String blockedResource =
+//        "http://127.0.0.1:8090/bookstore/stocklocations";
+//    String locations = this.webClient.get().uri(blockedResource).retrieve().bodyToMono(String.class).block();
+//    System.out.println(locations);
 
     // Similar to the assortment client, we run two requests to the resource server here:
     // 1) Look up amount of harry potter books in the provided location (unsecured)
-    int copiesInStock =
-        this.webClient.get().uri(localStockResource).retrieve().bodyToMono(Integer.class).block();
+    int copiesInStock = this.webClient.get().uri(localStockResource)
+        .attributes(oauth2AuthorizedClient(authorizedClient)).retrieve().bodyToMono(Integer.class)
+        .block();
 
     // 2) Add another 100 copies to that location, and update remote resource
     this.webClient.post().uri(localStockResource)
@@ -67,7 +69,8 @@ public class StockProxyController {
     // call to the RS (BookStore), to ensure the number this method returns effectively represents
     // the server side state. Therefore...
     // 3) Return resulting new stock
-    return this.webClient.get().uri(localStockResource).retrieve().bodyToMono(Integer.class)
+    return this.webClient.get().uri(localStockResource)
+        .attributes(oauth2AuthorizedClient(authorizedClient)).retrieve().bodyToMono(Integer.class)
         .block();
 
 

@@ -41,11 +41,11 @@ public class ResourceServerConfig {
             .hasAuthority(
                 "SCOPE_stock.write"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
         // ...
-//        .authorizeHttpRequests((authorize) -> authorize
-//            // The actual rules...
-//            .requestMatchers(HttpMethod.GET, "/bookstore/stocklocations/{stocklocation}/{isbn}")
-//            .hasAuthority(
-//                "SCOPE_stock.read"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
+        .authorizeHttpRequests((authorize) -> authorize
+            // The actual rules...
+            .requestMatchers(HttpMethod.GET, "/bookstore/stocklocations/{stocklocation}/{isbn}")
+            .hasAuthority(
+                "SCOPE_stock.read"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
 
         // Finally: grant public access to all remaining endpoints
         .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
