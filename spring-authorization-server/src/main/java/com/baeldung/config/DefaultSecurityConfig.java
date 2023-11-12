@@ -60,9 +60,9 @@ public class DefaultSecurityConfig {
 
     // The database knows several users: 2 generic users for comments and catalogue,
     // several for the individual stock locactions
-    UserDetails assortmentExtender =
-        User.withDefaultPasswordEncoder().username("AssortmentExtender").password("password")
-            .roles("ADMIN").build();
+//    UserDetails assortmentExtender =
+//        User.withDefaultPasswordEncoder().username("AssortmentExtender").password("password")
+//            .roles("ADMIN").build();
 
     UserDetails montrealStoreManager =
         User.withDefaultPasswordEncoder().username("Montréal").password("password").roles("USER")
@@ -96,7 +96,7 @@ public class DefaultSecurityConfig {
         User.withDefaultPasswordEncoder().username("Plank").password("password").roles("USER")
             .build();
 
-    return new InMemoryUserDetailsManager(assortmentExtender, montrealStoreManager,
+    return new InMemoryUserDetailsManager(montrealStoreManager,
         munchenStoreManager, osterhofenStoreManager, lyonStoreManager, marieCurie, leonardCohen,
         angelaMerkel, maxPlank);
   }

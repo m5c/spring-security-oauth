@@ -39,32 +39,21 @@ public class AuthorizationServerConfig {
   /**
    * This configuration bean associates the (proxy) clients that access resources on behalf of
    * resource owners. Technically the list should be extensible at runtime, as the interest of
-   * OAuth2 is to add new clients to a microserve, which are not known at deployment time. However,
-   * since the interest of this sample project is secruing the resource server API, hard coded
+   * OAuth2 is to add new clients to a microservice, which are not known at deployment time. However,
+   * since the interest of this sample project is securing the resource server API, hard coded
    * registration of proxy clients is acceptable.
    *
    * @return repository configuration listing the associated (proxy) client services.
    */
   @Bean
   public RegisteredClientRepository registeredClientRepository() {
-    RegisteredClient assortmentClient =
-        RegisteredClient.withId(UUID.randomUUID().toString()).clientId("assortment-client")
-            // "{noop}" is a prefix keyword to delegate to inmemory authentication. See: https://stackoverflow.com/a/47976759/13805480
-            // the suffix "secret" must match in the client's application.yml file.
-            .clientSecret("{noop}secret")
-            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-            .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-            .redirectUri("http://127.0.0.1:8080/login/oauth2/code/assortment-client-oidc")
-            .redirectUri("http://127.0.0.1:8080/authorized").scope(OidcScopes.OPENID)
-            .scope("assortment.write").build();
 
     // Here we added a second (proxy Oauth2) client, that has the priviledge to change
     // local store stocks
     // Also a change compared to the previous client is the updated port number -> "8081"
     RegisteredClient stockClient =
         RegisteredClient.withId(UUID.randomUUID().toString()).clientId("stock-client")
-            // "{noop}" is a prefix keyword to delegate to inmemory authentication. See: https://stackoverflow.com/a/47976759/13805480
+            // "{noop}" is a prefix keyword to delegate to in memory authentication. See: https://stackoverflow.com/a/47976759/13805480
             // the suffix "secret2" must match in the client's application.yml file.
             .clientSecret("{noop}secret2")
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -72,9 +61,9 @@ public class AuthorizationServerConfig {
             .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
             .redirectUri("http://127.0.0.1:8081/login/oauth2/code/stock-client-oidc")
             .redirectUri("http://127.0.0.1:8081/authorized").scope(OidcScopes.OPENID)
-            .scope("stock.write").build();
+            .scope("stock.read").scope("stock.write").build();
 
-    return new InMemoryRegisteredClientRepository(assortmentClient, stockClient);
+    return new InMemoryRegisteredClientRepository(stockClient);
   }
 
   @Bean

@@ -29,7 +29,7 @@ spring:
             client-secret: secret2 #Note: This must match the suffix in the AS-Config file
             authorization-grant-type: authorization_code
             redirect-uri: "http://127.0.0.1:8081/authorized"
-            scope: stock.write
+            scope: stock.read,stock.write
             client-name: stock-client-authorization-code
         provider:
           spring:
