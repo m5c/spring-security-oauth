@@ -50,10 +50,9 @@ public class ResourceServerConfig {
         .authorizeHttpRequests((authorize) -> authorize
             // The actual rules...
             .requestMatchers(HttpMethod.GET, "/bookstore/stocklocations")
-            .hasAuthority(
-                "SCOPE_full.access"))
+            .permitAll())
         // Finally: grant public access to all remaining endpoints
-        .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
+        .authorizeHttpRequests((authorize) -> authorize.anyRequest().denyAll())
         .oauth2ResourceServer(oauth2 -> {
           oauth2.jwt(jwt -> {
             jwt.jwtAuthenticationConverter(new FusedClaimConverter());
