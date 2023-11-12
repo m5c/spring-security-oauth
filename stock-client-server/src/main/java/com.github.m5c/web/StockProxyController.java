@@ -46,10 +46,12 @@ public class StockProxyController {
         "http://127.0.0.1:8090/bookstore/stocklocations/" + storeLocation + "/" + harryPotterIsbn;
 
     // just for fun, try to access something that is blocked for OAuth2 clients
-//    String blockedResource =
-//        "http://127.0.0.1:8090/bookstore/stocklocations";
-//    String locations = this.webClient.get().uri(blockedResource).retrieve().bodyToMono(String.class).block();
-//    System.out.println(locations);
+    // token MUST be sent here, because this is still a protected resource.
+    String blockedResource = "http://127.0.0.1:8090/bookstore/stocklocations";
+    String locations = this.webClient.get().uri(blockedResource)
+        .attributes(oauth2AuthorizedClient(authorizedClient)).retrieve().bodyToMono(String.class)
+        .block();
+    System.out.println(locations);
 
     // Similar to the assortment client, we run two requests to the resource server here:
     // 1) Look up amount of harry potter books in the provided location (unsecured)

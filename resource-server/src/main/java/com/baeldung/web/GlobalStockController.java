@@ -32,8 +32,7 @@ public class GlobalStockController {
   }
 
 
-//  @PreAuthorize("!#oauth2.isClient") // THIS JUST BLOCKS LITERALLY EVERYTHING!
-//  @PreAuthorize("#oauth2.isClient") // THIS ALSO JUST BLOCKS LITERALLY EVERYTHING!
+//  @PreAuthorize("!#oauth2.isClient()") // Requires token (blocks anything without a token) and only lets RO pass.
   @GetMapping("/bookstore/stocklocations")
   public Collection<String> getStoreLocations() {
     return GlobalStockImpl.getInstance().getStoreLocations();

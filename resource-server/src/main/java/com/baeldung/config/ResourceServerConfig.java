@@ -14,10 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class ResourceServerConfig {
 
   /**
-   * This filterchain secures the BookStores API endpoints, so an OAuth token is required for
-   * specific access. Additional security roles are added on a per-endpoint basis, when regex-url
-   * matching is not sufficuent (this is e.g. the case when part of the URL must be matched against
-   * the token resource owner).
+   * This filterchain secures the BookStores API endpoints, so an OAuth token scope is required for
+   * specific access.
    *
    * @param http configuration on which we can define pattern matcher and filter rules.
    * @return SecurityFilterChain to apply for all inbound requests to Resource server.
@@ -47,6 +45,13 @@ public class ResourceServerConfig {
             .hasAuthority(
                 "SCOPE_stock.read"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
 
+        // FILTER CHAIN to block any client from certain protected resources. (This chain is a whitelist, only for certain endpoints we block if no scope provided.
+        // TODO: think about using a blacklist... so no default scope is needed.).
+        .authorizeHttpRequests((authorize) -> authorize
+            // The actual rules...
+            .requestMatchers(HttpMethod.GET, "/bookstore/stocklocations")
+            .hasAuthority(
+                "SCOPE_full.access"))
         // Finally: grant public access to all remaining endpoints
         .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
         .oauth2ResourceServer(oauth2 -> {
