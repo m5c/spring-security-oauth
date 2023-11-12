@@ -1,0 +1,4 @@
+Access must start HERE: http://127.0.0.1:8081/stockextension/lyon/
+
+Username: "Curie" (Capital C)
+Password: "password" (all lower)
