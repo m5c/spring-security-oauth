@@ -2,3 +2,8 @@ Access must start HERE: http://127.0.0.1:8081/stockextension/lyon/
 
 Username: "Curie" (Capital C)
 Password: "password" (all lower)
+
+
+The actual resource server is here:
+http://127.0.0.1:8090/bookstore/stocklocations/Lyon
+http://127.0.0.1:8090/bookstore/stocklocations

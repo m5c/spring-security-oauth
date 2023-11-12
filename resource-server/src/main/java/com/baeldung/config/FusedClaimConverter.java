@@ -36,13 +36,13 @@ public class FusedClaimConverter implements Converter<Jwt, AbstractAuthenticatio
    * @return collection of granted authorities extracted from the jwt.
    */
   private static Collection<? extends GrantedAuthority> extractResourceRoles(final Jwt jwt) {
-    ArrayList<String> resourceAccess = jwt.getClaim(
-        "role"); // <- specify here whatever additional jwt claim you wish to convert to authority
-    if (resourceAccess != null) {
-      // Convert every entry in value list of "role" claim to an Authority
-      return resourceAccess.stream().map(x -> new SimpleGrantedAuthority("ROLE_" + x))
-          .collect(Collectors.toSet());
-    }
+//    ArrayList<String> resourceAccess = jwt.getClaim(
+//        "role"); // <- specify here whatever additional jwt claim you wish to convert to authority
+//    if (resourceAccess != null) {
+//      // Convert every entry in value list of "role" claim to an Authority
+//      return resourceAccess.stream().map(x -> new SimpleGrantedAuthority("ROLE_" + x))
+//          .collect(Collectors.toSet());
+//    }
     // Fallback: return empty list in case the jwt has no "role" claim.
     return Collections.emptySet();
   }

@@ -28,11 +28,11 @@ public class ResourceServerConfig {
 
     http
         // First pattern matcher rule: require token for write operations on assortment
-        .authorizeHttpRequests((authorize) -> authorize
-            // The actual rules...
-            .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}").hasAuthority(
-                "SCOPE_assortment.write")) // technically we have to check user role here, too - so that only admins can enable this delegation, not standard users.
-        // ...
+//        .authorizeHttpRequests((authorize) -> authorize
+//            // The actual rules...
+//            .requestMatchers(HttpMethod.PUT, "/bookstore/isbns/{isbn}").hasAuthority(
+//                "SCOPE_assortment.write")) // technically we have to check user role here, too - so that only admins can enable this delegation, not standard users.
+//        // ...
         // Second pattern matcher rule: require token for write operations on local store stock
         // This one is extended by user matching in the respective endpoint
         .authorizeHttpRequests((authorize) -> authorize
@@ -41,6 +41,12 @@ public class ResourceServerConfig {
             .hasAuthority(
                 "SCOPE_stock.write"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
         // ...
+//        .authorizeHttpRequests((authorize) -> authorize
+//            // The actual rules...
+//            .requestMatchers(HttpMethod.GET, "/bookstore/stocklocations/{stocklocation}/{isbn}")
+//            .hasAuthority(
+//                "SCOPE_stock.read"))  // technically we have to check user role here, too - so that only standard users can enable this delegation, not admins.
+
         // Finally: grant public access to all remaining endpoints
         .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
         .oauth2ResourceServer(oauth2 -> {

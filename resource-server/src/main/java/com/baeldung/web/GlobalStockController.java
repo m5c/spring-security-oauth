@@ -14,7 +14,6 @@ import java.util.Map;
 @CrossOrigin
 public class GlobalStockController {
 
-
   @GetMapping("/bookstore/stocklocations/{stocklocation}/{isbn}")
   public int getStock(@PathVariable("stocklocation") String city, @PathVariable("isbn") Long isbn) {
 
@@ -32,6 +31,9 @@ public class GlobalStockController {
     GlobalStockImpl.getInstance().setStock(city, isbn, amount);
   }
 
+
+//  @PreAuthorize("!#oauth2.isClient") // THIS JUST BLOCKS LITERALLY EVERYTHING!
+//  @PreAuthorize("#oauth2.isClient") // THIS ALSO JUST BLOCKS LITERALLY EVERYTHING!
   @GetMapping("/bookstore/stocklocations")
   public Collection<String> getStoreLocations() {
     return GlobalStockImpl.getInstance().getStoreLocations();
